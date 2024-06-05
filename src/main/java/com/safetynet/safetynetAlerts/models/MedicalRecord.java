@@ -8,14 +8,19 @@ import java.util.List;
 
 @Data
 public class MedicalRecord {
+
     @NotBlank
     private String firstName;
+
     @NotBlank
     private String lastName;
+
     @NotBlank
     private String birthdate;
+
     @NotNull
     private List<String> medications;
+
     @NotNull
     private List<String> allergies;
 }

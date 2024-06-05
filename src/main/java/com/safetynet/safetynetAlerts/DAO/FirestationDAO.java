@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -27,25 +26,18 @@ public class FirestationDAO {
     }
 
     public void removeFirestation(String value, String field) {
-        switch (field) {
-            case "address":
-                getFirestations().removeIf(firestation -> Objects.equals(firestation.getAddress(), value));
-            case "station":
-                getFirestations().removeIf(firestation -> Objects.equals(firestation.getStation(), value));
+        if (field.equals("address")) {
+            getFirestations().removeIf(firestation -> firestation.getAddress().equals(value));
+        } else {
+            getFirestations().removeIf(firestation -> firestation.getStation().equals(value));
         }
     }
 
     public Optional<Firestation> findFirestation(String address) {
-        return getFirestations()
-                .stream()
-                .filter(firestation -> firestation.getAddress().equals(address))
-                .findAny();
+        return getFirestations().stream().filter(firestation -> firestation.getAddress().equals(address)).findAny();
     }
 
     public List<Firestation> collectFirestation(String station) {
-        return getFirestations()
-                .stream()
-                .filter(firestation -> firestation.getStation().equals(station))
-                .collect(Collectors.toList());
+        return getFirestations().stream().filter(firestation -> firestation.getStation().equals(station)).collect(Collectors.toList());
     }
 }

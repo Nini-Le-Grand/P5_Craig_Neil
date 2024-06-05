@@ -8,13 +8,18 @@ import java.util.List;
 
 @Data
 public class MedicalRecordUpdateDTO {
+
     @NotBlank
     private String firstName;
+
     @NotBlank
     private String lastName;
+
     @NotNull
     private String birthdate;
+
     private List<String> medications;
+
     private List<String> allergies;
 }
 

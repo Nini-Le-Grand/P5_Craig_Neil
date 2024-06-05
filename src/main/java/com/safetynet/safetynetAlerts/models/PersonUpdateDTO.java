@@ -7,19 +7,26 @@ import lombok.Data;
 
 @Data
 public class PersonUpdateDTO {
-    @NotBlank(message = "firstName must not be blank")
+
+    @NotBlank
     private String firstName;
-    @NotBlank(message = "lastName must not be blank")
+
+    @NotBlank
     private String lastName;
-    @NotNull(message = "address must not be null")
+
+    @NotNull
     private String address;
-    @NotNull(message = "city must not be null")
+
+    @NotNull
     private String city;
-    @NotNull(message = "zip must not be null")
+
+    @NotNull
     private String zip;
-    @NotNull(message = "phone must not be null")
+
+    @NotNull
     private String phone;
-    @NotNull(message = "email must not be null")
+
+    @NotNull
     @Email
     private String email;
 }

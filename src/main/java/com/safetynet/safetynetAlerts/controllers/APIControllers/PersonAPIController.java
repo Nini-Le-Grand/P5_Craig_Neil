@@ -1,6 +1,6 @@
 package com.safetynet.safetynetAlerts.controllers.APIControllers;
 
-import com.safetynet.safetynetAlerts.models.APIDTOs.personInfoDTOs.PersonInfoDTO;
+import com.safetynet.safetynetAlerts.models.APIDTOs.PersonInfoDTO;
 import com.safetynet.safetynetAlerts.services.APIServices.PersonAPIService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.constraints.NotBlank;
@@ -32,7 +32,8 @@ public class PersonAPIController {
     }
 
     @GetMapping("/personInfo")
-    public ResponseEntity<?> getPersonInfo(@RequestParam("firstName") @NotBlank String firstName, @RequestParam("lastName") @NotBlank String lastName) {
+    public ResponseEntity<?> getPersonInfo(@RequestParam("firstName") @NotBlank String firstName, @RequestParam(
+            "lastName") @NotBlank String lastName) {
         try {
             List<PersonInfoDTO> personDto = personAPIService.processPersonInfo(firstName, lastName);
             return ResponseEntity.status(HttpStatus.OK).body(personDto);

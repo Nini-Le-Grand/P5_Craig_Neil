@@ -3,22 +3,24 @@ package com.safetynet.safetynetAlerts.services.APIServices;
 import com.safetynet.safetynetAlerts.DAO.FirestationDAO;
 import com.safetynet.safetynetAlerts.DAO.MedicalRecordDAO;
 import com.safetynet.safetynetAlerts.DAO.PersonDAO;
-import com.safetynet.safetynetAlerts.exceptions.NotFoundException;
-import com.safetynet.safetynetAlerts.models.APIDTOs.fireDTOs.FireDTO;
-import com.safetynet.safetynetAlerts.models.APIDTOs.fireDTOs.PersonFireDTO;
-import com.safetynet.safetynetAlerts.models.APIDTOs.firestationDTOs.FirestationDTO;
-import com.safetynet.safetynetAlerts.models.APIDTOs.firestationDTOs.PersonFirestationDTO;
-import com.safetynet.safetynetAlerts.models.APIDTOs.floodDTOs.AddressDTO;
-import com.safetynet.safetynetAlerts.models.APIDTOs.floodDTOs.FloodDTO;
-import com.safetynet.safetynetAlerts.models.APIDTOs.floodDTOs.PersonFloodDTO;
+import com.safetynet.safetynetAlerts.models.APIDTOs.FireDTO;
+import com.safetynet.safetynetAlerts.models.APIDTOs.PersonFireDTO;
+import com.safetynet.safetynetAlerts.models.APIDTOs.FirestationDTO;
+import com.safetynet.safetynetAlerts.models.APIDTOs.PersonFirestationDTO;
+import com.safetynet.safetynetAlerts.models.APIDTOs.AddressDTO;
+import com.safetynet.safetynetAlerts.models.APIDTOs.FloodDTO;
+import com.safetynet.safetynetAlerts.models.APIDTOs.PersonFloodDTO;
 import com.safetynet.safetynetAlerts.models.Firestation;
 import com.safetynet.safetynetAlerts.models.MedicalRecord;
 import com.safetynet.safetynetAlerts.models.Person;
+import com.safetynet.safetynetAlerts.utils.Utils;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+@Setter
 @Service
 public class FirestationAPIService {
 
@@ -32,38 +34,53 @@ public class FirestationAPIService {
     private FirestationDAO firestationDAO;
 
     public FirestationDTO processFirestation(String station) throws Exception {
-        List<String> addresses = firestationDAO.collectFirestation(station)
-                .stream()
-                .map(Firestation::getAddress)
-                .toList();
+        List<String> addresses =
+                firestationDAO.collectFirestation(station).stream().map(Firestation::getAddress).toList();
 
         if (!addresses.isEmpty()) {
             List<Person> persons = personDAO.collectOnAddresses(addresses);
             if (!persons.isEmpty()) {
-                List<PersonFirestationDTO> list = new ArrayList<>();
+                List<PersonFirestationDTO> personFirestationDTOS = new ArrayList<>();
                 int children = 0;
                 for (Person person : persons) {
-                    PersonFirestationDTO personDTO = new PersonFirestationDTO(person.getFirstName(), person.getLastName(), person.getAddress(), person.getPhone());
-                    list.add(personDTO);
-                    int age = medicalRecordDAO.getAge(person.getFirstName(), person.getLastName());
-                    if (age < 18) {
-                        children += 1;
+                    PersonFirestationDTO personDTO = new PersonFirestationDTO();
+                    personDTO.setFirstName(person.getFirstName());
+                    personDTO.setLastName(person.getLastName());
+                    personDTO.setAddress(person.getAddress());
+                    personDTO.setCity(person.getCity());
+                    personDTO.setZip(person.getZip());
+                    personDTO.setPhone(person.getPhone());
+
+                    personFirestationDTOS.add(personDTO);
+
+                    Optional<MedicalRecord> medicalRecord = medicalRecordDAO.findMedicalRecord(person.getFirstName(),
+                            person.getLastName());
+                    if (medicalRecord.isPresent()) {
+                        String birthdate = medicalRecord.get().getBirthdate();
+                        int age = Utils.convertToAge(birthdate);
+                        if (age < 18) {
+                            children += 1;
+                        }
+                    } else {
+                        throw new Exception("Cannot find medical record");
                     }
                 }
-                return new FirestationDTO(list, list.size() - children, children);
+                FirestationDTO firestationDTO = new FirestationDTO();
+                firestationDTO.setPersons(personFirestationDTOS);
+                firestationDTO.setAdults(personFirestationDTOS.size() - children);
+                firestationDTO.setChildren(children);
+                return firestationDTO;
             } else {
-                throw new NotFoundException("Cannot find any persons");
+                throw new Exception("Cannot find person");
             }
         } else {
-            throw new NotFoundException("This station does not serve any address.");
+            throw new Exception("Cannot find firestation");
         }
     }
 
-    public List<String> processPhoneAlert(String station) throws NotFoundException {
-        List<String> addresses = firestationDAO.collectFirestation(station)
-                .stream()
-                .map(Firestation::getAddress)
-                .toList();
+    public List<String> processPhoneAlert(String station) throws Exception {
+        List<String> addresses =
+                firestationDAO.collectFirestation(station).stream().map(Firestation::getAddress).toList();
 
         if (!addresses.isEmpty()) {
             List<Person> persons = personDAO.collectOnAddresses(addresses);
@@ -72,68 +89,85 @@ public class FirestationAPIService {
                 Set<String> uniquePhones = new HashSet<>(phones);
                 return new ArrayList<>(uniquePhones);
             } else {
-                throw new NotFoundException("Cannot find any person");
+                throw new Exception("Cannot find person");
             }
         } else {
-            throw new NotFoundException("This station does not serve any address.");
+            throw new Exception("Cannot find firestation");
         }
     }
 
-    public FireDTO processFire(String address) throws NotFoundException {
+    public FireDTO processFire(String address) throws Exception {
         Optional<Firestation> station = firestationDAO.findFirestation(address);
         if (station.isPresent()) {
             List<Person> persons = personDAO.collectOnAddresses(Collections.singletonList(address));
             if (!persons.isEmpty()) {
-                FireDTO dto = new FireDTO(new ArrayList<>(), station.get().getStation());
+                FireDTO dto = new FireDTO();
+                dto.setPersons(new ArrayList<>());
+                dto.setStation(station.get().getStation());
                 for (Person person : persons) {
-                    Optional<MedicalRecord> record = medicalRecordDAO.findMedicalRecord(person.getFirstName(), person.getLastName());
+                    Optional<MedicalRecord> record = medicalRecordDAO.findMedicalRecord(person.getFirstName(),
+                            person.getLastName());
                     if (record.isPresent()) {
                         MedicalRecord medicalRecord = record.get();
-                        PersonFireDTO personDTO = new PersonFireDTO(person.getFirstName(), person.getLastName(), person.getPhone(), medicalRecord.getBirthdate(), medicalRecord.getMedications(), medicalRecord.getAllergies());
+                        int age = Utils.convertToAge(medicalRecord.getBirthdate());
+                        PersonFireDTO personDTO = new PersonFireDTO();
+                        personDTO.setFirstName(person.getFirstName());
+                        personDTO.setLastName(person.getLastName());
+                        personDTO.setPhone(person.getPhone());
+                        personDTO.setAge(age);
+                        personDTO.setMedications(medicalRecord.getMedications());
+                        personDTO.setAllergies(medicalRecord.getAllergies());
                         dto.getPersons().add(personDTO);
                     } else {
-                        throw new NotFoundException("Medical record is missing");
+                        throw new Exception("Cannot find medical record");
                     }
                 }
                 return dto;
             } else {
-                throw new NotFoundException("Cannot find any person");
+                throw new Exception("Cannot find person");
             }
         } else {
-            throw new NotFoundException("Cannot find any firestation");
+            throw new Exception("Cannot find firestation");
         }
     }
 
-    public List<FloodDTO> processFlood(String[] stations) throws NotFoundException {
+    public List<FloodDTO> processFlood(String[] stations) throws Exception {
         List<FloodDTO> dto = new ArrayList<>();
         for (String station : stations) {
-            FloodDTO floodDto = new FloodDTO(station, new ArrayList<>());
-            List<String> addresses = firestationDAO.collectFirestation(station).stream().map(Firestation::getAddress).toList();
+            FloodDTO floodDto = new FloodDTO();
+            floodDto.setStation(station);
+            floodDto.setAddresses(new ArrayList<>());
+            List<String> addresses =
+                    firestationDAO.collectFirestation(station).stream().map(Firestation::getAddress).toList();
+
             if (!addresses.isEmpty()) {
                 for (String address : addresses) {
-                    AddressDTO addressDto = new AddressDTO(address, new ArrayList<>());
+                    AddressDTO addressDto = new AddressDTO();
+                    addressDto.setAddress(address);
+                    addressDto.setPersons(new ArrayList<>());
                     List<Person> persons = personDAO.collectOnAddress(address);
                     if (!persons.isEmpty()) {
                         for (Person person : persons) {
-                            Optional<MedicalRecord> record = medicalRecordDAO.findMedicalRecord(person.getFirstName(), person.getLastName());
+                            Optional<MedicalRecord> record = medicalRecordDAO.findMedicalRecord(person.getFirstName()
+                                    , person.getLastName());
                             if (record.isPresent()) {
                                 MedicalRecord medicalRecord = record.get();
-                                PersonFloodDTO personFloodDto = new PersonFloodDTO(
-                                        person.getFirstName(),
-                                        person.getLastName(),
-                                        person.getPhone(),
-                                        medicalRecord.getBirthdate(),
-                                        medicalRecord.getMedications(),
-                                        medicalRecord.getAllergies()
-                                );
+                                int age = Utils.convertToAge(medicalRecord.getBirthdate());
+                                PersonFloodDTO personFloodDto = new PersonFloodDTO();
+                                personFloodDto.setFirstName(person.getFirstName());
+                                personFloodDto.setLastName(person.getLastName());
+                                personFloodDto.setPhone(person.getPhone());
+                                personFloodDto.setAge(age);
+                                personFloodDto.setMedications(medicalRecord.getMedications());
+                                personFloodDto.setAllergies(medicalRecord.getAllergies());
                                 addressDto.getPersons().add(personFloodDto);
                             } else {
-                                throw new NotFoundException("Cannot find medical record");
+                                throw new Exception("Cannot find medical record");
                             }
                         }
                         floodDto.getAddresses().add(addressDto);
                     } else {
-                        throw new NotFoundException("Cannot find person");
+                        throw new Exception("Cannot find person");
                     }
                 }
                 dto.add(floodDto);
@@ -142,7 +176,7 @@ public class FirestationAPIService {
         if (!dto.isEmpty()) {
             return dto;
         } else {
-            throw new NotFoundException("Cannot find firestation");
+            throw new Exception("Cannot find firestation");
         }
     }
 }

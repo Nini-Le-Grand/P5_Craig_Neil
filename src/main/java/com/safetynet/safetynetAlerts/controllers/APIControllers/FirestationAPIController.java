@@ -1,9 +1,10 @@
 package com.safetynet.safetynetAlerts.controllers.APIControllers;
 
-import com.safetynet.safetynetAlerts.models.APIDTOs.fireDTOs.FireDTO;
-import com.safetynet.safetynetAlerts.models.APIDTOs.firestationDTOs.FirestationDTO;
-import com.safetynet.safetynetAlerts.models.APIDTOs.floodDTOs.FloodDTO;
+import com.safetynet.safetynetAlerts.models.APIDTOs.FireDTO;
+import com.safetynet.safetynetAlerts.models.APIDTOs.FirestationDTO;
+import com.safetynet.safetynetAlerts.models.APIDTOs.FloodDTO;
 import com.safetynet.safetynetAlerts.services.APIServices.FirestationAPIService;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,16 +31,14 @@ public class FirestationAPIController {
             FirestationDTO dto = firestationAPIService.processFirestation(station);
             return ResponseEntity.status(HttpStatus.OK).body(dto);
         } catch (Exception e) {
-            ResponseEntity<String> notFound = ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-            ResponseEntity<String> badRequest = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-            return e.getClass().getSimpleName().equals("Exception") ? badRequest : notFound;
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
     @GetMapping("/phoneAlert")
-    public ResponseEntity<?> getPhoneAlert(@RequestParam("firestation") @NotBlank String station) {
+    public ResponseEntity<?> getPhoneAlert(@RequestParam("firestation") @NotBlank String firestation) {
         try {
-            List<String> phones = firestationAPIService.processPhoneAlert(station);
+            List<String> phones = firestationAPIService.processPhoneAlert(firestation);
             return ResponseEntity.status(HttpStatus.OK).body(phones);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -63,5 +63,10 @@ public class FirestationAPIController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<String> handleValidationException(ConstraintViolationException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 }
