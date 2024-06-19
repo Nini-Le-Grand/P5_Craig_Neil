@@ -1,7 +1,7 @@
 package com.safetynet.safetynetAlerts.integrationTests.MedicalRecordTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.safetynetAlerts.DAO.JSONDataDAO;
+import com.safetynet.safetynetAlerts.data.JSONDataLoader;
 import com.safetynet.safetynetAlerts.UtilsData.MedicalRecordData;
 import com.safetynet.safetynetAlerts.UtilsData.PersonData;
 import com.safetynet.safetynetAlerts.models.MedicalRecord;
@@ -29,7 +29,7 @@ public class MedicalRecordDeleteTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private JSONDataDAO jsonDataDAO;
+    private JSONDataLoader jsonDataLoader;
 
     @InjectMocks
     private MedicalRecordData medicalRecordData;
@@ -41,7 +41,7 @@ public class MedicalRecordDeleteTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        jsonDataDAO.loadDataFromFile();
+        jsonDataLoader.loadDataFromFile();
 
         MedicalRecord medicalRecord = medicalRecordData.getMedicalRecord();
         mockMvc.perform(post("/medicalRecord")
@@ -105,5 +105,12 @@ public class MedicalRecordDeleteTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.content().string("Cannot find medical record to delete"));
 
+        personIdDTO.setFirstName("Neil");
+        personIdDTO.setLastName("Unknown");
+        mockMvc.perform(delete("/medicalRecord")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(personIdDTO)))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.content().string("Cannot find medical record to delete"));
     }
 }

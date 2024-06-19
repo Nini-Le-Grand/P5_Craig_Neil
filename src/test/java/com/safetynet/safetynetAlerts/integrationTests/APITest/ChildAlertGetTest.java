@@ -1,7 +1,7 @@
 package com.safetynet.safetynetAlerts.integrationTests.APITest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.safetynetAlerts.DAO.JSONDataDAO;
+import com.safetynet.safetynetAlerts.data.JSONDataLoader;
 import com.safetynet.safetynetAlerts.UtilsData.PersonData;
 import com.safetynet.safetynetAlerts.models.Person;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +28,7 @@ public class ChildAlertGetTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private JSONDataDAO jsonDataDAO;
+    private JSONDataLoader jsonDataLoader;
 
     @InjectMocks
     private PersonData personData;
@@ -37,12 +37,12 @@ public class ChildAlertGetTest {
 
     @BeforeEach
     void setup() throws Exception {
-        jsonDataDAO.loadDataFromFile();
+        jsonDataLoader.loadDataFromFile();
         person = personData.getPerson();
     }
 
     @Test
-    void testChildAlertGet_SuccessWithChildren() throws Exception {
+    void testHandleGetChildAlert_SuccessWithChildren() throws Exception {
         mockMvc.perform(get("/childAlert")
                         .param("address", "947 E. Rose Dr")
                         .accept(MediaType.APPLICATION_JSON))
@@ -59,7 +59,7 @@ public class ChildAlertGetTest {
     }
 
     @Test
-    void testChildAlertGet_SuccessWithNoChildren() throws Exception {
+    void testHandleGetChildAlert_SuccessWithNoChildren() throws Exception {
         mockMvc.perform(get("/childAlert")
                         .param("address", "908 73rd St")
                         .accept(MediaType.APPLICATION_JSON))
@@ -68,7 +68,7 @@ public class ChildAlertGetTest {
     }
 
     @Test
-    void testChildAlertGet_FailurePersonNotFound() throws Exception {
+    void testHandleGetChildAlert_FailurePersonNotFound() throws Exception {
         mockMvc.perform(get("/childAlert")
                         .param("address", "unknown address")
                         .accept(MediaType.APPLICATION_JSON))
@@ -77,7 +77,7 @@ public class ChildAlertGetTest {
     }
 
     @Test
-    void testChildAlertGet_FailureMedicalRecordNotFound() throws Exception {
+    void testHandleGetChildAlert_FailureMedicalRecordNotFound() throws Exception {
         mockMvc.perform(post("/person")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(person)))
@@ -92,11 +92,11 @@ public class ChildAlertGetTest {
     }
 
     @Test
-    void testChildAlertGet_FailureEmptyParam() throws Exception {
+    void testHandleGetChildAlert_FailureEmptyParam() throws Exception {
         mockMvc.perform(get("/childAlert")
                         .param("address", "")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("handleGetFirestation.address: must not be blank"));
+                .andExpect(content().string("handleGetChildAlert.address: must not be blank"));
     }
 }

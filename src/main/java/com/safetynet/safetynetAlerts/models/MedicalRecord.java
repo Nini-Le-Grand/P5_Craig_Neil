@@ -6,6 +6,9 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Represents a medical record of a person, including personal details, birthdate, medications, and allergies.
+ */
 @Data
 public class MedicalRecord {
 

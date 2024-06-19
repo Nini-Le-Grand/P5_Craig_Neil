@@ -1,8 +1,11 @@
-package com.safetynet.safetynetAlerts.models.APIDTOs;
+package com.safetynet.safetynetAlerts.models;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+/**
+ * Represents a data transfer object gathering information about a person associated with a fire station.
+ */
 @Data
 public class PersonFirestationDTO {
 

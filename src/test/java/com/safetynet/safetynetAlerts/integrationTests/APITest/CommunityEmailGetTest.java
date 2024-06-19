@@ -1,7 +1,7 @@
 package com.safetynet.safetynetAlerts.integrationTests.APITest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.safetynetAlerts.DAO.JSONDataDAO;
+import com.safetynet.safetynetAlerts.data.JSONDataLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +28,15 @@ public class CommunityEmailGetTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private JSONDataDAO jsonDataDAO;
+    private JSONDataLoader jsonDataLoader;
 
     @BeforeEach
     void setup() throws Exception {
-        jsonDataDAO.loadDataFromFile();
+        jsonDataLoader.loadDataFromFile();
     }
 
     @Test
-    void testCommunityEmailGet_Success() throws Exception {
+    void testHandleGetCommunityEmails_Success() throws Exception {
         mockMvc.perform(get("/communityEmail")
                         .param("city", "Culver")
                         .accept(MediaType.APPLICATION_JSON))
@@ -47,7 +47,7 @@ public class CommunityEmailGetTest {
     }
 
     @Test
-    void testCommunityEmailGet_FailurePersonNotFound() throws Exception {
+    void testHandleGetCommunityEmails_FailurePersonNotFound() throws Exception {
         mockMvc.perform(get("/communityEmail")
                         .param("city", "Unknown city")
                         .accept(MediaType.APPLICATION_JSON))
@@ -56,11 +56,11 @@ public class CommunityEmailGetTest {
     }
 
     @Test
-    void testCommunityEmailGet_FailureEmptyParam() throws Exception {
+    void testHandleGetCommunityEmails_FailureEmptyParam() throws Exception {
         mockMvc.perform(get("/communityEmail")
                         .param("city", "")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().string("getCommunityEmail.city: must not be blank"));
+                .andExpect(MockMvcResultMatchers.content().string("handleGetCommunityEmails.city: must not be blank"));
     }
 }

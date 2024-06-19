@@ -4,6 +4,9 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Represents JSON data containing lists of persons, fire stations, and medical records.
+ */
 @Data
 public class JSONData {
 

@@ -1,7 +1,7 @@
 package com.safetynet.safetynetAlerts.integrationTests.MedicalRecordTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.safetynetAlerts.DAO.JSONDataDAO;
+import com.safetynet.safetynetAlerts.data.JSONDataLoader;
 import com.safetynet.safetynetAlerts.UtilsData.MedicalRecordData;
 import com.safetynet.safetynetAlerts.models.MedicalRecord;
 import com.safetynet.safetynetAlerts.models.MedicalRecordUpdateDTO;
@@ -29,7 +29,7 @@ public class MedicalRecordPutTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private JSONDataDAO jsonDataDAO;
+    private JSONDataLoader jsonDataLoader;
 
     @InjectMocks
     private MedicalRecordData medicalRecordData;
@@ -38,7 +38,7 @@ public class MedicalRecordPutTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        jsonDataDAO.loadDataFromFile();
+        jsonDataLoader.loadDataFromFile();
 
         MedicalRecord medicalRecord = medicalRecordData.getMedicalRecord();
         mockMvc.perform(post("/medicalRecord")

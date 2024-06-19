@@ -3,7 +3,7 @@ package com.safetynet.safetynetAlerts.unitTests.ServicesTest.PersonAPIServiceTes
 import com.safetynet.safetynetAlerts.DAO.PersonDAO;
 import com.safetynet.safetynetAlerts.UtilsData.PersonData;
 import com.safetynet.safetynetAlerts.models.Person;
-import com.safetynet.safetynetAlerts.services.APIServices.PersonAPIService;
+import com.safetynet.safetynetAlerts.services.PersonAPIService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

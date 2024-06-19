@@ -1,7 +1,7 @@
 package com.safetynet.safetynetAlerts.integrationTests.APITest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.safetynetAlerts.DAO.JSONDataDAO;
+import com.safetynet.safetynetAlerts.data.JSONDataLoader;
 import com.safetynet.safetynetAlerts.UtilsData.FirestationData;
 import com.safetynet.safetynetAlerts.models.Firestation;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +30,7 @@ public class PhoneAlertGetTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private JSONDataDAO jsonDataDAO;
+    private JSONDataLoader jsonDataLoader;
 
     @InjectMocks
     private FirestationData firestationData;
@@ -39,13 +39,13 @@ public class PhoneAlertGetTest {
 
     @BeforeEach
     void setup() throws Exception {
-        jsonDataDAO.loadDataFromFile();
+        jsonDataLoader.loadDataFromFile();
 
         firestation = firestationData.getFireStation();
     }
 
     @Test
-    void testPhoneAlertGet_Success() throws Exception {
+    void testHandleGetPhoneAlert_Success() throws Exception {
         mockMvc.perform(get("/phoneAlert")
                         .param("firestation", "1")
                         .accept(MediaType.APPLICATION_JSON))
@@ -56,7 +56,7 @@ public class PhoneAlertGetTest {
     }
 
     @Test
-    void testPhoneAlertGet_FailureFirestationNotFound() throws Exception {
+    void testHandleGetPhoneAlert_FailureFirestationNotFound() throws Exception {
         mockMvc.perform(get("/phoneAlert")
                         .param("firestation", "5")
                         .accept(MediaType.APPLICATION_JSON))
@@ -65,7 +65,7 @@ public class PhoneAlertGetTest {
     }
 
     @Test
-    void testPhoneAlertGet_FailurePersonNotFound() throws Exception {
+    void testHandleGetPhoneAlert_FailurePersonNotFound() throws Exception {
         mockMvc.perform(post("/firestation")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(firestation)))
@@ -80,11 +80,11 @@ public class PhoneAlertGetTest {
     }
 
     @Test
-    void testPhoneAlertGet_FailureEmptyParam() throws Exception {
+    void testHandleGetPhoneAlert_FailureEmptyParam() throws Exception {
         mockMvc.perform(get("/phoneAlert")
                         .param("firestation", "")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("getPhoneAlert.firestation: must not be blank"));
+                .andExpect(content().string("handleGetPhoneAlert.firestation: must not be blank"));
     }
 }

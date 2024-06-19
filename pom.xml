@@ -47,7 +47,16 @@
 			<version>0.8.11</version>
 		</dependency>
 	</dependencies>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>3.2.5</version>
+			</plugin>
+		</plugins>
 
+	</reporting>
 	<build>
 		<plugins>
 			<plugin>
@@ -67,7 +76,6 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven-surefire-plugin.version}</version>
 			</plugin>
-
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>

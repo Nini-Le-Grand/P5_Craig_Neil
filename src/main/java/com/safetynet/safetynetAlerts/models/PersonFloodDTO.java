@@ -1,4 +1,4 @@
-package com.safetynet.safetynetAlerts.models.APIDTOs;
+package com.safetynet.safetynetAlerts.models;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -6,8 +6,11 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Represents a data transfer object gathering information about a person affected by a flood.
+ */
 @Data
-public class PersonInfoDTO {
+public class PersonFloodDTO {
 
     @NotBlank
     private String firstName;
@@ -16,16 +19,7 @@ public class PersonInfoDTO {
     private String lastName;
 
     @NotBlank
-    private String address;
-
-    @NotBlank
-    private String city;
-
-    @NotBlank
-    private String zip;
-
-    @NotBlank
-    private String email;
+    private String phone;
 
     @NotBlank
     private int age;

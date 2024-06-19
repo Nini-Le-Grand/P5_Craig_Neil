@@ -1,7 +1,7 @@
 package com.safetynet.safetynetAlerts.integrationTests.FirestationTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.safetynetAlerts.DAO.JSONDataDAO;
+import com.safetynet.safetynetAlerts.data.JSONDataLoader;
 import com.safetynet.safetynetAlerts.UtilsData.FirestationData;
 import com.safetynet.safetynetAlerts.models.Firestation;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +27,7 @@ public class FirestationPutTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private JSONDataDAO jsonDataDAO;
+    private JSONDataLoader jsonDataLoader;
 
     @InjectMocks
     private FirestationData firestationData;
@@ -36,7 +36,7 @@ public class FirestationPutTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        jsonDataDAO.loadDataFromFile();
+        jsonDataLoader.loadDataFromFile();
 
         firestation = firestationData.getFireStation();
         mockMvc.perform(post("/firestation")

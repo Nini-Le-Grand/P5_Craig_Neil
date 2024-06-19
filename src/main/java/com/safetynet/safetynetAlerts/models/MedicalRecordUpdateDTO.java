@@ -6,6 +6,9 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Represents a data transfer object for updating medical records.
+ */
 @Data
 public class MedicalRecordUpdateDTO {
 

@@ -1,7 +1,7 @@
 package com.safetynet.safetynetAlerts.integrationTests.PersonTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.safetynetAlerts.DAO.JSONDataDAO;
+import com.safetynet.safetynetAlerts.data.JSONDataLoader;
 import com.safetynet.safetynetAlerts.UtilsData.PersonData;
 import com.safetynet.safetynetAlerts.models.Person;
 import com.safetynet.safetynetAlerts.models.PersonIdDTO;
@@ -28,7 +28,7 @@ class PersonDeleteTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private JSONDataDAO jsonDataDAO;
+    private JSONDataLoader jsonDataLoader;
 
     @InjectMocks
     private PersonData personData;
@@ -37,7 +37,7 @@ class PersonDeleteTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        jsonDataDAO.loadDataFromFile();
+        jsonDataLoader.loadDataFromFile();
 
         Person person = personData.getPerson();
         mockMvc.perform(post("/person")
@@ -101,5 +101,12 @@ class PersonDeleteTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.content().string("Cannot find person to delete"));
 
+        personIdDTO.setFirstName("Neil");
+        personIdDTO.setLastName("Unknown");
+        mockMvc.perform(delete("/person")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(personIdDTO)))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.content().string("Cannot find person to delete"));
     }
 }

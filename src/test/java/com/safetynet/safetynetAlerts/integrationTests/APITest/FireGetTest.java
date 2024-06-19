@@ -1,7 +1,7 @@
 package com.safetynet.safetynetAlerts.integrationTests.APITest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.safetynetAlerts.DAO.JSONDataDAO;
+import com.safetynet.safetynetAlerts.data.JSONDataLoader;
 import com.safetynet.safetynetAlerts.UtilsData.FirestationData;
 import com.safetynet.safetynetAlerts.UtilsData.PersonData;
 import com.safetynet.safetynetAlerts.models.Firestation;
@@ -31,7 +31,7 @@ public class FireGetTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private JSONDataDAO jsonDataDAO;
+    private JSONDataLoader jsonDataLoader;
 
     @InjectMocks
     private PersonData personData;
@@ -45,13 +45,13 @@ public class FireGetTest {
 
     @BeforeEach
     void setup() throws Exception {
-        jsonDataDAO.loadDataFromFile();
+        jsonDataLoader.loadDataFromFile();
         person = personData.getPerson();
         firestation = firestationData.getFireStation();
     }
 
     @Test
-    void testFireGet_Success() throws Exception {
+    void testHandleGetFire_Success() throws Exception {
         mockMvc.perform(get("/fire")
                         .param("address", "834 Binoc Ave")
                         .accept(MediaType.APPLICATION_JSON))
@@ -69,7 +69,7 @@ public class FireGetTest {
     }
 
     @Test
-    void testFireGet_FailureFirestationNotFound() throws Exception {
+    void testHandleGetFire_FailureFirestationNotFound() throws Exception {
         mockMvc.perform(get("/fire")
                         .param("address", "Unknown address")
                         .accept(MediaType.APPLICATION_JSON))
@@ -78,7 +78,7 @@ public class FireGetTest {
     }
 
     @Test
-    void testFireGet_FailurePersonNotFound() throws Exception {
+    void testHandleGetFire_FailurePersonNotFound() throws Exception {
         mockMvc.perform(post("/firestation")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(firestation)))
@@ -94,7 +94,7 @@ public class FireGetTest {
     }
 
     @Test
-    void testFireGet_FailureMedicalRecordNotFound() throws Exception {
+    void testHandleGetFire_FailureMedicalRecordNotFound() throws Exception {
         mockMvc.perform(post("/firestation")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(firestation)))
@@ -116,11 +116,11 @@ public class FireGetTest {
     }
 
     @Test
-    void testFireGet_FailureEmptyParam() throws Exception {
+    void testHandleGetFire_FailureEmptyParam() throws Exception {
         mockMvc.perform(get("/fire")
                         .param("address", "")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("getFire.address: must not be blank"));
+                .andExpect(content().string("handleGetFire.address: must not be blank"));
     }
 }

@@ -1,6 +1,7 @@
 package com.safetynet.safetynetAlerts.controllers;
 
 import com.safetynet.safetynetAlerts.models.Firestation;
+import com.safetynet.safetynetAlerts.models.MedicalRecord;
 import com.safetynet.safetynetAlerts.services.FirestationService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.constraints.NotBlank;
@@ -14,14 +15,24 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller class for handling {@link Firestation} related HTTP requests.
+ */
 @RestController
 @Validated
 public class FireStationController {
     @Autowired
     private FirestationService firestationService;
 
-    private static final Logger logger = LoggerFactory.getLogger(PersonController.class);
+    private static final Logger logger = LoggerFactory.getLogger(FireStationController.class);
 
+    /**
+     * Handles the POST request to save a new {@link Firestation}.
+     *
+     * @param firestation The firestation object to be saved.
+     * @param result      The binding result containing validation errors, if any.
+     * @return ResponseEntity indicating the status of the operation.
+     */
     @PostMapping("/firestation")
     public ResponseEntity<String> handlePostFirestation(@RequestBody @Valid Firestation firestation,
                                                         BindingResult result) {
@@ -38,6 +49,13 @@ public class FireStationController {
         }
     }
 
+    /**
+     * Handles the PUT request to edit an existing {@link Firestation}.
+     *
+     * @param firestation The updated firestation object.
+     * @param result      The binding result containing validation errors, if any.
+     * @return ResponseEntity indicating the status of the operation.
+     */
     @PutMapping("/firestation")
     public ResponseEntity<String> handlePutFirestation(@RequestBody @Valid Firestation firestation,
                                                        BindingResult result) {
@@ -55,6 +73,12 @@ public class FireStationController {
 
     }
 
+    /**
+     * Handles the DELETE request to delete a {@link Firestation}.
+     *
+     * @param addressOrStation The address or station identifier of the firestation to be deleted.
+     * @return ResponseEntity indicating the status of the operation.
+     */
     @DeleteMapping("/firestation/{addressOrStation}")
     public ResponseEntity<String> handleDeleteFirestation(@PathVariable @NotBlank String addressOrStation) {
         logger.info("Entered handleDeleteFirestation method");
@@ -70,6 +94,12 @@ public class FireStationController {
         }
     }
 
+    /**
+     * Exception handler for ConstraintViolationException.
+     *
+     * @param e The ConstraintViolationException.
+     * @return ResponseEntity containing the error message.
+     */
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<String> handleValidationException(ConstraintViolationException e) {
         logger.error("Validation error: {}", e.getMessage());

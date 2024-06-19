@@ -1,15 +1,15 @@
-package com.safetynet.safetynetAlerts.services.APIServices;
+package com.safetynet.safetynetAlerts.services;
 
 import com.safetynet.safetynetAlerts.DAO.FirestationDAO;
 import com.safetynet.safetynetAlerts.DAO.MedicalRecordDAO;
 import com.safetynet.safetynetAlerts.DAO.PersonDAO;
-import com.safetynet.safetynetAlerts.models.APIDTOs.FireDTO;
-import com.safetynet.safetynetAlerts.models.APIDTOs.PersonFireDTO;
-import com.safetynet.safetynetAlerts.models.APIDTOs.FirestationDTO;
-import com.safetynet.safetynetAlerts.models.APIDTOs.PersonFirestationDTO;
-import com.safetynet.safetynetAlerts.models.APIDTOs.AddressDTO;
-import com.safetynet.safetynetAlerts.models.APIDTOs.FloodDTO;
-import com.safetynet.safetynetAlerts.models.APIDTOs.PersonFloodDTO;
+import com.safetynet.safetynetAlerts.models.FireDTO;
+import com.safetynet.safetynetAlerts.models.PersonFireDTO;
+import com.safetynet.safetynetAlerts.models.FirestationDTO;
+import com.safetynet.safetynetAlerts.models.PersonFirestationDTO;
+import com.safetynet.safetynetAlerts.models.AddressDTO;
+import com.safetynet.safetynetAlerts.models.FloodDTO;
+import com.safetynet.safetynetAlerts.models.PersonFloodDTO;
 import com.safetynet.safetynetAlerts.models.Firestation;
 import com.safetynet.safetynetAlerts.models.MedicalRecord;
 import com.safetynet.safetynetAlerts.models.Person;
@@ -20,6 +20,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+/**
+ * Service class for handling API operations related to Firestation java objects.
+ */
 @Setter
 @Service
 public class FirestationAPIService {
@@ -33,6 +36,13 @@ public class FirestationAPIService {
     @Autowired
     private FirestationDAO firestationDAO;
 
+    /**
+     * Processes firestation information for a given station number.
+     *
+     * @param station the station number to process the information for
+     * @return a {@link FirestationDTO} containing persons covered by the station, including count of adults and children
+     * @throws Exception if no firestations, persons, or medical records are found for the station
+     */
     public FirestationDTO processFirestation(String station) throws Exception {
         List<String> addresses =
                 firestationDAO.collectFirestation(station).stream().map(Firestation::getAddress).toList();
@@ -78,6 +88,13 @@ public class FirestationAPIService {
         }
     }
 
+    /**
+     * Processes phone alerts for a given station number.
+     *
+     * @param station the station number to process the phone alerts for
+     * @return a list of unique phone numbers of persons covered by the station
+     * @throws Exception if no firestations or persons are found for the station
+     */
     public List<String> processPhoneAlert(String station) throws Exception {
         List<String> addresses =
                 firestationDAO.collectFirestation(station).stream().map(Firestation::getAddress).toList();
@@ -96,14 +113,21 @@ public class FirestationAPIService {
         }
     }
 
+    /**
+     * Processes fire information for a given address.
+     *
+     * @param address the address to process the fire information for
+     * @return a {@link FireDTO} containing persons at the address and the station serving it
+     * @throws Exception if no firestation, persons, or medical records are found for the address
+     */
     public FireDTO processFire(String address) throws Exception {
         Optional<Firestation> station = firestationDAO.findFirestation(address);
         if (station.isPresent()) {
             List<Person> persons = personDAO.collectOnAddresses(Collections.singletonList(address));
             if (!persons.isEmpty()) {
-                FireDTO dto = new FireDTO();
-                dto.setPersons(new ArrayList<>());
-                dto.setStation(station.get().getStation());
+                FireDTO fireDTO = new FireDTO();
+                fireDTO.setPersons(new ArrayList<>());
+                fireDTO.setStation(station.get().getStation());
                 for (Person person : persons) {
                     Optional<MedicalRecord> record = medicalRecordDAO.findMedicalRecord(person.getFirstName(),
                             person.getLastName());
@@ -117,12 +141,12 @@ public class FirestationAPIService {
                         personDTO.setAge(age);
                         personDTO.setMedications(medicalRecord.getMedications());
                         personDTO.setAllergies(medicalRecord.getAllergies());
-                        dto.getPersons().add(personDTO);
+                        fireDTO.getPersons().add(personDTO);
                     } else {
                         throw new Exception("Cannot find medical record");
                     }
                 }
-                return dto;
+                return fireDTO;
             } else {
                 throw new Exception("Cannot find person");
             }
@@ -131,6 +155,13 @@ public class FirestationAPIService {
         }
     }
 
+    /**
+     * Processes flood information for given station numbers.
+     *
+     * @param stations an array of station numbers to process the flood information for
+     * @return a list of {@link FloodDTO} containing addresses and persons covered by the stations
+     * @throws Exception if no firestations, persons, or medical records are found for the stations
+     */
     public List<FloodDTO> processFlood(String[] stations) throws Exception {
         List<FloodDTO> dto = new ArrayList<>();
         for (String station : stations) {

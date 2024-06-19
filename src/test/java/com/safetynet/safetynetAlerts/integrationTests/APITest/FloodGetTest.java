@@ -1,7 +1,7 @@
 package com.safetynet.safetynetAlerts.integrationTests.APITest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.safetynetAlerts.DAO.JSONDataDAO;
+import com.safetynet.safetynetAlerts.data.JSONDataLoader;
 import com.safetynet.safetynetAlerts.UtilsData.FirestationData;
 import com.safetynet.safetynetAlerts.UtilsData.PersonData;
 import com.safetynet.safetynetAlerts.models.Firestation;
@@ -32,7 +32,7 @@ public class FloodGetTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private JSONDataDAO jsonDataDAO;
+    private JSONDataLoader jsonDataLoader;
 
     @InjectMocks
     private PersonData personData;
@@ -46,14 +46,13 @@ public class FloodGetTest {
 
     @BeforeEach
     void setup() throws Exception {
-        jsonDataDAO.loadDataFromFile();
-
+        jsonDataLoader.loadDataFromFile();
         person = personData.getPerson();
         firestation = firestationData.getFireStation();
     }
 
     @Test
-    void testFloodGet_SuccessOneParam() throws Exception {
+    void testHandleGetFlood_SuccessOneParam() throws Exception {
         mockMvc.perform(get("/flood/stations")
                         .param("stations", "1")
                         .accept(MediaType.APPLICATION_JSON))
@@ -77,7 +76,7 @@ public class FloodGetTest {
     }
 
     @Test
-    void testFloodGet_SuccessMultipleParam() throws Exception {
+    void testHandleGetFlood_SuccessMultipleParam() throws Exception {
         mockMvc.perform(get("/flood/stations")
                         .param("stations", "1")
                         .param("stations", "2")
@@ -90,7 +89,7 @@ public class FloodGetTest {
     }
 
     @Test
-    void testFloodGet_FailureFirestationNotFound() throws Exception {
+    void testHandleGetFlood_FailureFirestationNotFound() throws Exception {
         mockMvc.perform(get("/flood/stations")
                         .param("stations", "unknown")
                         .accept(MediaType.APPLICATION_JSON))
@@ -99,7 +98,7 @@ public class FloodGetTest {
     }
 
     @Test
-    void testFloodGet_FailurePersonNotFound() throws Exception {
+    void testHandleGetFlood_FailurePersonNotFound() throws Exception {
         mockMvc.perform(post("/firestation")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(firestation)))
@@ -114,7 +113,7 @@ public class FloodGetTest {
     }
 
     @Test
-    void testFireGet_FailureMedicalRecordNotFound() throws Exception {
+    void testHandleGetFlood_FailureMedicalRecordNotFound() throws Exception {
         mockMvc.perform(post("/firestation")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(firestation)))
@@ -135,11 +134,11 @@ public class FloodGetTest {
     }
 
     @Test
-    void testFireGet_FailureEmptyParam() throws Exception {
+    void testHandleGetFlood_FailureEmptyParam() throws Exception {
         mockMvc.perform(get("/flood/stations")
                         .param("stations", "")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("getFlood.stations: must not be empty"));
+                .andExpect(content().string("handleGetFlood.stations: must not be empty"));
     }
 }

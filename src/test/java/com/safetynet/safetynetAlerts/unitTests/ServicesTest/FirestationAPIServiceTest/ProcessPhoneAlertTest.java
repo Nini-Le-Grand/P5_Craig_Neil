@@ -6,7 +6,7 @@ import com.safetynet.safetynetAlerts.UtilsData.FirestationData;
 import com.safetynet.safetynetAlerts.UtilsData.PersonData;
 import com.safetynet.safetynetAlerts.models.Firestation;
 import com.safetynet.safetynetAlerts.models.Person;
-import com.safetynet.safetynetAlerts.services.APIServices.FirestationAPIService;
+import com.safetynet.safetynetAlerts.services.FirestationAPIService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

@@ -15,6 +15,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller class for handling {@link Person} related HTTP requests.
+ */
 @RestController
 @Validated
 public class PersonController {
@@ -23,6 +26,13 @@ public class PersonController {
 
     private static final Logger logger = LoggerFactory.getLogger(PersonController.class);
 
+    /**
+     * Handles the POST request to save a new {@link Person}.
+     *
+     * @param person The person object to be saved.
+     * @param result The binding result containing validation errors, if any.
+     * @return ResponseEntity indicating the status of the operation.
+     */
     @PostMapping("/person")
     public ResponseEntity<String> handlePostPerson(@RequestBody @Valid Person person, BindingResult result) {
         logger.info("Entered handlePostPerson method");
@@ -38,6 +48,13 @@ public class PersonController {
         }
     }
 
+    /**
+     * Handles the PUT request to edit an existing {@link Person}.
+     *
+     * @param personDTO The DTO containing the updated person information.
+     * @param result    The binding result containing validation errors, if any.
+     * @return ResponseEntity indicating the status of the operation.
+     */
     @PutMapping("/person")
     public ResponseEntity<String> handlePutPerson(@RequestBody @Valid PersonUpdateDTO personDTO, BindingResult result) {
         logger.info("Entered handlePutPerson method");
@@ -53,6 +70,13 @@ public class PersonController {
         }
     }
 
+    /**
+     * Handles the DELETE request to delete a {@link Person}.
+     *
+     * @param personDTO The DTO containing the person identifier (first name and last name).
+     * @param result    The binding result containing validation errors, if any.
+     * @return ResponseEntity indicating the status of the operation.
+     */
     @DeleteMapping("/person")
     public ResponseEntity<String> handleDeletePerson(@RequestBody @Valid PersonIdDTO personDTO, BindingResult result) {
         logger.info("Entered handleDeletePerson method");
@@ -68,6 +92,12 @@ public class PersonController {
         }
     }
 
+    /**
+     * Exception handler for ConstraintViolationException.
+     *
+     * @param e The ConstraintViolationException.
+     * @return ResponseEntity containing the error message.
+     */
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<String> handleValidationException(ConstraintViolationException e) {
         logger.error("Validation error: {}", e.getMessage());

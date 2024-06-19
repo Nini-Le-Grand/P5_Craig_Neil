@@ -3,6 +3,7 @@ package com.safetynet.safetynetAlerts.controllers;
 import com.safetynet.safetynetAlerts.models.PersonIdDTO;
 import com.safetynet.safetynetAlerts.models.MedicalRecordUpdateDTO;
 import com.safetynet.safetynetAlerts.models.MedicalRecord;
+import com.safetynet.safetynetAlerts.models.PersonInfoDTO;
 import com.safetynet.safetynetAlerts.services.MedicalRecordService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
@@ -15,15 +16,24 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller class for handling {@link MedicalRecord} related HTTP requests.
+ */
 @RestController
 @Validated
 public class MedicalRecordController {
     @Autowired
     private MedicalRecordService medicalRecordService;
 
-    private static final Logger logger = LoggerFactory.getLogger(PersonController.class);
+    private static final Logger logger = LoggerFactory.getLogger(MedicalRecordController.class);
 
-
+    /**
+     * Handles the POST request to save a new {@link MedicalRecord}.
+     *
+     * @param medicalRecord The medical record object to be saved.
+     * @param result        The binding result containing validation errors, if any.
+     * @return ResponseEntity indicating the status of the operation.
+     */
     @PostMapping("/medicalRecord")
     public ResponseEntity<String> handlePostMedicalRecord(@RequestBody @Valid MedicalRecord medicalRecord,
                                                           BindingResult result) {
@@ -40,7 +50,13 @@ public class MedicalRecordController {
         }
     }
 
-
+    /**
+     * Handles the PUT request to edit an existing {@link MedicalRecord}.
+     *
+     * @param medicalRecordDTO The DTO containing the updated medical record information.
+     * @param result           The binding result containing validation errors, if any.
+     * @return ResponseEntity indicating the status of the operation.
+     */
     @PutMapping("/medicalRecord")
     public ResponseEntity<String> handlePutMedicalRecord(@RequestBody @Valid MedicalRecordUpdateDTO medicalRecordDTO,
                                                          BindingResult result) {
@@ -57,7 +73,13 @@ public class MedicalRecordController {
         }
     }
 
-
+    /**
+     * Handles the DELETE request to delete a {@link MedicalRecord}.
+     *
+     * @param idPersonDTO The DTO containing the person identifier (first name and last name).
+     * @param result      The binding result containing validation errors, if any.
+     * @return ResponseEntity indicating the status of the operation.
+     */
     @DeleteMapping("/medicalRecord")
     public ResponseEntity<String> handleDeleteMedicalRecord(@RequestBody @Valid PersonIdDTO idPersonDTO,
                                                             BindingResult result) {
@@ -74,6 +96,12 @@ public class MedicalRecordController {
         }
     }
 
+    /**
+     * Exception handler for ConstraintViolationException.
+     *
+     * @param e The ConstraintViolationException.
+     * @return ResponseEntity containing the error message.
+     */
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<String> handleValidationException(ConstraintViolationException e) {
         logger.error("Validation error: {}", e.getMessage());

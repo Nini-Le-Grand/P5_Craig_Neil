@@ -1,7 +1,7 @@
 package com.safetynet.safetynetAlerts.integrationTests.APITest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.safetynetAlerts.DAO.JSONDataDAO;
+import com.safetynet.safetynetAlerts.data.JSONDataLoader;
 import com.safetynet.safetynetAlerts.UtilsData.PersonData;
 import com.safetynet.safetynetAlerts.models.Person;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +29,7 @@ public class PersonInfoGetTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private JSONDataDAO jsonDataDAO;
+    private JSONDataLoader jsonDataLoader;
 
     @InjectMocks
     private PersonData personData;
@@ -38,13 +38,12 @@ public class PersonInfoGetTest {
 
     @BeforeEach
     void setup() throws Exception {
-        jsonDataDAO.loadDataFromFile();
-
+        jsonDataLoader.loadDataFromFile();
         person = personData.getPerson();
     }
 
     @Test
-    void testPersonInfoGet_Success() throws Exception {
+    void testHandleGetPersonInfo_Success() throws Exception {
         mockMvc.perform(get("/personInfo")
                         .param("firstName", "John")
                         .param("lastName", "Boyd")
@@ -66,17 +65,24 @@ public class PersonInfoGetTest {
     }
 
     @Test
-    void testPersonInfoGet_FailurePersonNotFound() throws Exception {
+    void testHandleGetPersonInfo_FailurePersonNotFound() throws Exception {
         mockMvc.perform(get("/personInfo")
                         .param("firstName", "Neil")
                         .param("lastName", "Craig")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("Cannot find person"));
+
+        mockMvc.perform(get("/personInfo")
+                        .param("firstName", "John")
+                        .param("lastName", "Unknown")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Cannot find person"));
     }
 
     @Test
-    void testPersonInfoGet_FailureMedicalRecordNotFound() throws Exception {
+    void testHandleGetPersonInfo_FailureMedicalRecordNotFound() throws Exception {
         mockMvc.perform(post("/person")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(person)))
@@ -92,19 +98,19 @@ public class PersonInfoGetTest {
     }
 
     @Test
-    void testPersonInfoGet_FailureEmptyParam() throws Exception {
+    void testHandleGetPersonInfo_FailureEmptyParam() throws Exception {
         mockMvc.perform(get("/personInfo")
                         .param("firstName", "")
                         .param("lastName", "Craig")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("getPersonInfo.firstName: must not be blank"));
+                .andExpect(content().string("handleGetPersonInfo.firstName: must not be blank"));
 
         mockMvc.perform(get("/personInfo")
                         .param("firstName", "Neil")
                         .param("lastName", "")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("getPersonInfo.lastName: must not be blank"));
+                .andExpect(content().string("handleGetPersonInfo.lastName: must not be blank"));
     }
 }
