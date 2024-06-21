@@ -110,6 +110,6 @@ class PersonPutTest {
                         .content(objectMapper.writeValueAsString(personUpdateDTO)))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.content()
-                        .string("Cannot find person to edit"));
+                        .string("Cannot find Person to edit"));
     }
 }

@@ -77,7 +77,7 @@ public class FirestationDeleteTest {
         mockMvc.perform(delete("/firestation/{addressOrStation}", pathVariable)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.content().string("Cannot find firestation to delete"));
+                .andExpect(MockMvcResultMatchers.content().string("Cannot find station to delete"));
     }
 
     @Test

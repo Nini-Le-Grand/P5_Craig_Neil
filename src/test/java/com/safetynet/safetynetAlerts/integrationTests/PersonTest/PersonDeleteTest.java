@@ -99,7 +99,7 @@ class PersonDeleteTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(personIdDTO)))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.content().string("Cannot find person to delete"));
+                .andExpect(MockMvcResultMatchers.content().string("Cannot find Person to delete"));
 
         personIdDTO.setFirstName("Neil");
         personIdDTO.setLastName("Unknown");
@@ -107,6 +107,6 @@ class PersonDeleteTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(personIdDTO)))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.content().string("Cannot find person to delete"));
+                .andExpect(MockMvcResultMatchers.content().string("Cannot find Person to delete"));
     }
 }

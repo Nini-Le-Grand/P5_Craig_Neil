@@ -52,7 +52,7 @@ public class CommunityEmailGetTest {
                         .param("city", "Unknown city")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(MockMvcResultMatchers.content().string("Cannot find person"));
+                .andExpect(MockMvcResultMatchers.content().string("Cannot find Person"));
     }
 
     @Test

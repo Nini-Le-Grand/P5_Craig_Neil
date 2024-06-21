@@ -81,7 +81,7 @@ public class MedicalRecordServiceTest {
 
         Exception exception = assertThrows(Exception.class,
                 () -> medicalRecordService.editMedicalRecord(medicalRecordUpdateDTO));
-        assertEquals(exception.getMessage(), "Cannot find medical record to edit");
+        assertEquals(exception.getMessage(), "Cannot find MedicalRecord to edit");
     }
 
     @Test
@@ -105,6 +105,6 @@ public class MedicalRecordServiceTest {
 
         Exception exception = assertThrows(Exception.class,
                 () -> medicalRecordService.deleteMedicalRecord(personIdDTO));
-        assertEquals(exception.getMessage(), "Cannot find medical record to delete");
+        assertEquals(exception.getMessage(), "Cannot find MedicalRecord to delete");
     }
 }

@@ -119,6 +119,6 @@ public class MedicalRecordPutTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(medicalRecordUpdateDTO)))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.content().string("Cannot find medical record to edit"));
+                .andExpect(MockMvcResultMatchers.content().string("Cannot find MedicalRecord to edit"));
     }
 }

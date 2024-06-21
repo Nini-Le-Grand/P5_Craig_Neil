@@ -85,7 +85,7 @@ public class ProcessPersonInfoTest {
 
         Exception exception = assertThrows(Exception.class, () -> personAPIService.processPersonInfo(anyString(),
                 anyString()));
-        assertEquals(exception.getMessage(), "Cannot find person");
+        assertEquals(exception.getMessage(), "Cannot find Person");
     }
 
     @Test
@@ -97,6 +97,6 @@ public class ProcessPersonInfoTest {
 
         Exception exception = assertThrows(Exception.class, () -> personAPIService.processPersonInfo(anyString(),
                 anyString()));
-        assertEquals(exception.getMessage(), "Cannot find medical record");
+        assertEquals(exception.getMessage(), "Cannot find MedicalRecord");
     }
 }

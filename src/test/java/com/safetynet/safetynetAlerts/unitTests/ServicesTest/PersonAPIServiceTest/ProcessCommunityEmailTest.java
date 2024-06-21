@@ -51,6 +51,6 @@ public class ProcessCommunityEmailTest {
         when(personDAO.collectOnCity(anyString())).thenReturn(Collections.emptyList());
 
         Exception exception = assertThrows(Exception.class, () -> personAPIService.processCommunityEmail(anyString()));
-        assertEquals(exception.getMessage(), "Cannot find person");
+        assertEquals(exception.getMessage(), "Cannot find Person");
     }
 }

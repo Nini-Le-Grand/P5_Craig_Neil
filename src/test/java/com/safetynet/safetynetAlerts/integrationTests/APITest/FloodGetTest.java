@@ -94,7 +94,7 @@ public class FloodGetTest {
                         .param("stations", "unknown")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Cannot find firestation"));
+                .andExpect(content().string("Cannot find Firestation"));
     }
 
     @Test
@@ -109,7 +109,7 @@ public class FloodGetTest {
                         .param("stations", "5")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Cannot find person"));
+                .andExpect(content().string("Cannot find Person"));
     }
 
     @Test
@@ -130,7 +130,7 @@ public class FloodGetTest {
                         .param("stations", "5")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Cannot find medical record"));
+                .andExpect(content().string("Cannot find MedicalRecord"));
     }
 
     @Test

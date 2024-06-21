@@ -86,7 +86,7 @@ public class ProcessFireTest {
                 .thenReturn(Optional.empty());
 
         Exception exception = assertThrows(Exception.class, () -> firestationAPIService.processFire(anyString()));
-        assertEquals(exception.getMessage(), "Cannot find firestation");
+        assertEquals(exception.getMessage(), "Cannot find Firestation");
     }
 
     @Test
@@ -99,7 +99,7 @@ public class ProcessFireTest {
                 .thenReturn(Collections.emptyList());
 
         Exception exception = assertThrows(Exception.class, () -> firestationAPIService.processFire(anyString()));
-        assertEquals(exception.getMessage(), "Cannot find person");
+        assertEquals(exception.getMessage(), "Cannot find Person");
     }
 
     @Test
@@ -115,6 +115,6 @@ public class ProcessFireTest {
                 .thenReturn(Optional.empty());
 
         Exception exception = assertThrows(Exception.class, () -> firestationAPIService.processFire(anyString()));
-        assertEquals(exception.getMessage(), "Cannot find medical record");
+        assertEquals(exception.getMessage(), "Cannot find MedicalRecord");
     }
 }

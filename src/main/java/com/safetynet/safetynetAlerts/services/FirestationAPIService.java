@@ -15,6 +15,8 @@ import com.safetynet.safetynetAlerts.models.MedicalRecord;
 import com.safetynet.safetynetAlerts.models.Person;
 import com.safetynet.safetynetAlerts.utils.Utils;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +38,8 @@ public class FirestationAPIService {
     @Autowired
     private FirestationDAO firestationDAO;
 
+    private static final Logger logger = LoggerFactory.getLogger(FirestationAPIService.class);
+
     /**
      * Processes firestation information for a given station number.
      *
@@ -44,10 +48,11 @@ public class FirestationAPIService {
      * @throws Exception if no firestations, persons, or medical records are found for the station
      */
     public FirestationDTO processFirestation(String station) throws Exception {
+        logger.info("Collecting addresses on station");
         List<String> addresses =
                 firestationDAO.collectFirestation(station).stream().map(Firestation::getAddress).toList();
-
         if (!addresses.isEmpty()) {
+            logger.info("Collecting Person on addresses");
             List<Person> persons = personDAO.collectOnAddresses(addresses);
             if (!persons.isEmpty()) {
                 List<PersonFirestationDTO> personFirestationDTOS = new ArrayList<>();
@@ -63,6 +68,7 @@ public class FirestationAPIService {
 
                     personFirestationDTOS.add(personDTO);
 
+                    logger.info("Collecting MedicalRecord of {}", person);
                     Optional<MedicalRecord> medicalRecord = medicalRecordDAO.findMedicalRecord(person.getFirstName(),
                             person.getLastName());
                     if (medicalRecord.isPresent()) {
@@ -72,7 +78,8 @@ public class FirestationAPIService {
                             children += 1;
                         }
                     } else {
-                        throw new Exception("Cannot find medical record");
+                        logger.error("Cannot find MedicalRecord of {}", person);
+                        throw new Exception("Cannot find MedicalRecord");
                     }
                 }
                 FirestationDTO firestationDTO = new FirestationDTO();
@@ -81,10 +88,12 @@ public class FirestationAPIService {
                 firestationDTO.setChildren(children);
                 return firestationDTO;
             } else {
-                throw new Exception("Cannot find person");
+                logger.error("Cannot find Person at these addresses");
+                throw new Exception("Cannot find Person");
             }
         } else {
-            throw new Exception("Cannot find firestation");
+            logger.error("Cannot find Firestation");
+            throw new Exception("Cannot find Firestation");
         }
     }
 
@@ -96,20 +105,24 @@ public class FirestationAPIService {
      * @throws Exception if no firestations or persons are found for the station
      */
     public List<String> processPhoneAlert(String station) throws Exception {
+        logger.info("Collecting addresses on station");
         List<String> addresses =
                 firestationDAO.collectFirestation(station).stream().map(Firestation::getAddress).toList();
 
         if (!addresses.isEmpty()) {
+            logger.info("Collecting Person on addresses");
             List<Person> persons = personDAO.collectOnAddresses(addresses);
             if (!persons.isEmpty()) {
                 List<String> phones = persons.stream().map(Person::getPhone).toList();
                 Set<String> uniquePhones = new HashSet<>(phones);
                 return new ArrayList<>(uniquePhones);
             } else {
-                throw new Exception("Cannot find person");
+                logger.error("Cannot find Person at these addresses");
+                throw new Exception("Cannot find Person");
             }
         } else {
-            throw new Exception("Cannot find firestation");
+            logger.error("Cannot find Firestation");
+            throw new Exception("Cannot find Firestation");
         }
     }
 
@@ -121,14 +134,17 @@ public class FirestationAPIService {
      * @throws Exception if no firestation, persons, or medical records are found for the address
      */
     public FireDTO processFire(String address) throws Exception {
+        logger.info("Collecting station on address");
         Optional<Firestation> station = firestationDAO.findFirestation(address);
         if (station.isPresent()) {
+            logger.info("Collecting Persons on station");
             List<Person> persons = personDAO.collectOnAddresses(Collections.singletonList(address));
             if (!persons.isEmpty()) {
                 FireDTO fireDTO = new FireDTO();
                 fireDTO.setPersons(new ArrayList<>());
                 fireDTO.setStation(station.get().getStation());
                 for (Person person : persons) {
+                    logger.info("Collecting MedicalRecord of {}", person);
                     Optional<MedicalRecord> record = medicalRecordDAO.findMedicalRecord(person.getFirstName(),
                             person.getLastName());
                     if (record.isPresent()) {
@@ -143,15 +159,18 @@ public class FirestationAPIService {
                         personDTO.setAllergies(medicalRecord.getAllergies());
                         fireDTO.getPersons().add(personDTO);
                     } else {
-                        throw new Exception("Cannot find medical record");
+                        logger.error("Cannot find MedicalRecord of {}", person);
+                        throw new Exception("Cannot find MedicalRecord");
                     }
                 }
                 return fireDTO;
             } else {
-                throw new Exception("Cannot find person");
+                logger.error("Cannot find Person");
+                throw new Exception("Cannot find Person");
             }
         } else {
-            throw new Exception("Cannot find firestation");
+            logger.error("Cannot find station");
+            throw new Exception("Cannot find Firestation");
         }
     }
 
@@ -165,6 +184,7 @@ public class FirestationAPIService {
     public List<FloodDTO> processFlood(String[] stations) throws Exception {
         List<FloodDTO> dto = new ArrayList<>();
         for (String station : stations) {
+            logger.info("Collecting addresses of {}", station);
             FloodDTO floodDto = new FloodDTO();
             floodDto.setStation(station);
             floodDto.setAddresses(new ArrayList<>());
@@ -173,12 +193,14 @@ public class FirestationAPIService {
 
             if (!addresses.isEmpty()) {
                 for (String address : addresses) {
+                    logger.info("Collecting Persons of {}", address);
                     AddressDTO addressDto = new AddressDTO();
                     addressDto.setAddress(address);
                     addressDto.setPersons(new ArrayList<>());
                     List<Person> persons = personDAO.collectOnAddress(address);
                     if (!persons.isEmpty()) {
                         for (Person person : persons) {
+                            logger.info("Collecting MedicalRecord of {}", person);
                             Optional<MedicalRecord> record = medicalRecordDAO.findMedicalRecord(person.getFirstName()
                                     , person.getLastName());
                             if (record.isPresent()) {
@@ -193,12 +215,14 @@ public class FirestationAPIService {
                                 personFloodDto.setAllergies(medicalRecord.getAllergies());
                                 addressDto.getPersons().add(personFloodDto);
                             } else {
-                                throw new Exception("Cannot find medical record");
+                                logger.error("Cannot find MedicalRecord of {}", person);
+                                throw new Exception("Cannot find MedicalRecord");
                             }
                         }
                         floodDto.getAddresses().add(addressDto);
                     } else {
-                        throw new Exception("Cannot find person");
+                        logger.error("Cannot find Person of {}", address);
+                        throw new Exception("Cannot find Person");
                     }
                 }
                 dto.add(floodDto);
@@ -207,7 +231,8 @@ public class FirestationAPIService {
         if (!dto.isEmpty()) {
             return dto;
         } else {
-            throw new Exception("Cannot find firestation");
+            logger.error("Cannot find station");
+            throw new Exception("Cannot find Firestation");
         }
     }
 }

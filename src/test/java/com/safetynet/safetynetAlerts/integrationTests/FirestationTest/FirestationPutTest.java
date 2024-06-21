@@ -80,6 +80,6 @@ public class FirestationPutTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(firestation)))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.content().string("Cannot find firestation to edit"));
+                .andExpect(MockMvcResultMatchers.content().string("Cannot find Firestation to edit"));
     }
 }

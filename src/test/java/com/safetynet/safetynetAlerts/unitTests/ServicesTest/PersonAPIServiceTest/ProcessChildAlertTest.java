@@ -79,7 +79,7 @@ public class ProcessChildAlertTest {
         when(personDAO.collectOnAddresses(anyList())).thenReturn(Collections.emptyList());
 
         Exception exception = assertThrows(Exception.class, () -> personAPIService.processChildAlert(anyString()));
-        assertEquals(exception.getMessage(), "Cannot find person");
+        assertEquals(exception.getMessage(), "Cannot find Person");
     }
 
     @Test
@@ -90,6 +90,6 @@ public class ProcessChildAlertTest {
         when(medicalRecordDAO.findMedicalRecord(anyString(), anyString())).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(Exception.class, () -> personAPIService.processChildAlert(anyString()));
-        assertEquals(exception.getMessage(), "Cannot find medical record");
+        assertEquals(exception.getMessage(), "Cannot find MedicalRecord");
     }
 }

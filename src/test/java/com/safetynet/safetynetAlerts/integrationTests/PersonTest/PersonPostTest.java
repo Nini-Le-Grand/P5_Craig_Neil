@@ -105,6 +105,8 @@ class PersonPostTest {
         mockMvc.perform(post("/person")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(person)))
-                .andExpect(MockMvcResultMatchers.status().isConflict());
+               .andExpect(MockMvcResultMatchers.status().isConflict())
+               .andExpect(MockMvcResultMatchers.content().string("Person already saved"));
+
     }
 }

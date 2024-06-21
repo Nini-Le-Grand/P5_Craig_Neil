@@ -71,14 +71,14 @@ public class PersonInfoGetTest {
                         .param("lastName", "Craig")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Cannot find person"));
+                .andExpect(content().string("Cannot find Person"));
 
         mockMvc.perform(get("/personInfo")
                         .param("firstName", "John")
                         .param("lastName", "Unknown")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Cannot find person"));
+                .andExpect(content().string("Cannot find Person"));
     }
 
     @Test
@@ -94,7 +94,7 @@ public class PersonInfoGetTest {
                         .param("lastName", "Craig")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Cannot find medical record"));
+                .andExpect(content().string("Cannot find MedicalRecord"));
     }
 
     @Test

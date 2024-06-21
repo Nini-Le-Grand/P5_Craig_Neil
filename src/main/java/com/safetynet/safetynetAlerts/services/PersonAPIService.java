@@ -5,6 +5,8 @@ import com.safetynet.safetynetAlerts.DAO.PersonDAO;
 import com.safetynet.safetynetAlerts.models.*;
 import com.safetynet.safetynetAlerts.utils.Utils;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,8 @@ public class PersonAPIService {
     @Autowired
     private MedicalRecordDAO medicalRecordDAO;
 
+    private static final Logger logger = LoggerFactory.getLogger(PersonAPIService.class);
+
     /**
      * Processes a child alert for a given address.
      *
@@ -34,11 +38,13 @@ public class PersonAPIService {
      * @throws Exception if no persons or medical records are found for the address
      */
     public ChildAlertDTO processChildAlert(String address) throws Exception {
+        logger.info("Collecting Persons on address");
         List<Person> persons = personDAO.collectOnAddresses(Collections.singletonList(address));
         if (!persons.isEmpty()) {
             List<ChildDTO> children = new ArrayList<>();
             List<PersonIdDTO> adults = new ArrayList<>();
             for (Person person : persons) {
+                logger.info("Collecting MedicalRecord of {}", person);
                 Optional<MedicalRecord> optionalRecord = medicalRecordDAO.findMedicalRecord(person.getFirstName(),
                         person.getLastName());
                 if (optionalRecord.isPresent()) {
@@ -57,7 +63,8 @@ public class PersonAPIService {
                         adults.add(adult);
                     }
                 } else {
-                    throw new Exception("Cannot find medical record");
+                    logger.error("Cannot find MedicalRecord of {}", person);
+                    throw new Exception("Cannot find MedicalRecord");
                 }
             }
             if (children.isEmpty()) {
@@ -69,7 +76,8 @@ public class PersonAPIService {
                 return childAlertDTO;
             }
         } else {
-            throw new Exception("Cannot find person");
+            logger.error("Cannot find Person living at this address");
+            throw new Exception("Cannot find Person");
         }
     }
 
@@ -82,10 +90,12 @@ public class PersonAPIService {
      * @throws Exception if no persons or medical records are found for the given name
      */
     public List<PersonInfoDTO> processPersonInfo(String firstName, String lastName) throws Exception {
+        logger.info("Collecting Persons on firstname and lastname");
         List<Person> persons = personDAO.collectPerson(firstName, lastName);
         if (!persons.isEmpty()) {
             List<PersonInfoDTO> personsDTO = new ArrayList<>();
             for (Person person : persons) {
+                logger.info("Collecting MedicalRecord of {}", person);
                 Optional<MedicalRecord> optionalRecord = medicalRecordDAO.findMedicalRecord(person.getFirstName(),
                         person.getLastName());
                 if (optionalRecord.isPresent()) {
@@ -103,12 +113,14 @@ public class PersonAPIService {
                     personInfoDTO.setAllergies(medicalRecord.getAllergies());
                     personsDTO.add(personInfoDTO);
                 } else {
-                    throw new Exception("Cannot find medical record");
+                    logger.error("Cannot find MedicalRecord of {}", person);
+                    throw new Exception("Cannot find MedicalRecord");
                 }
             }
             return personsDTO;
         } else {
-            throw new Exception("Cannot find person");
+            logger.error("Cannot find Person");
+            throw new Exception("Cannot find Person");
         }
     }
 
@@ -120,11 +132,13 @@ public class PersonAPIService {
      * @throws Exception if no persons are found in the city
      */
     public List<String> processCommunityEmail(String city) throws Exception {
+        logger.info("Collecting Persons on city");
         List<Person> persons = personDAO.collectOnCity(city);
         if (!persons.isEmpty()) {
             return persons.stream().map(Person::getEmail).toList();
         } else {
-            throw new Exception("Cannot find person");
+            logger.error("Cannot find Person");
+            throw new Exception("Cannot find Person");
         }
     }
 }

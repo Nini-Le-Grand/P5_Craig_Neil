@@ -76,7 +76,7 @@ public class PersonServiceTest {
                 .thenReturn(Optional.empty());
 
         Exception exception = assertThrows(Exception.class, () -> personService.editPerson(personUpdateDTO));
-        assertEquals(exception.getMessage(), "Cannot find person to edit");
+        assertEquals(exception.getMessage(), "Cannot find Person to edit");
     }
 
     @Test
@@ -99,6 +99,6 @@ public class PersonServiceTest {
                 .thenReturn(Optional.empty());
 
         Exception exception = assertThrows(Exception.class, () -> personService.deletePerson(personId));
-        assertEquals(exception.getMessage(), "Cannot find person to delete");
+        assertEquals(exception.getMessage(), "Cannot find Person to delete");
     }
 }

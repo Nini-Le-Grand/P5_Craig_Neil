@@ -103,7 +103,7 @@ public class MedicalRecordDeleteTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(personIdDTO)))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.content().string("Cannot find medical record to delete"));
+                .andExpect(MockMvcResultMatchers.content().string("Cannot find MedicalRecord to delete"));
 
         personIdDTO.setFirstName("Neil");
         personIdDTO.setLastName("Unknown");
@@ -111,6 +111,6 @@ public class MedicalRecordDeleteTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(personIdDTO)))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.content().string("Cannot find medical record to delete"));
+                .andExpect(MockMvcResultMatchers.content().string("Cannot find MedicalRecord to delete"));
     }
 }

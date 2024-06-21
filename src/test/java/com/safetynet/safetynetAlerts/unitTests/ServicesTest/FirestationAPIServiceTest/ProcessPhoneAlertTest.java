@@ -66,7 +66,7 @@ public class ProcessPhoneAlertTest {
                 .thenReturn(Collections.emptyList());
 
         Exception exception = assertThrows(Exception.class, () -> firestationAPIService.processPhoneAlert(anyString()));
-        assertEquals(exception.getMessage(), "Cannot find firestation");
+        assertEquals(exception.getMessage(), "Cannot find Firestation");
     }
 
     @Test
@@ -79,6 +79,6 @@ public class ProcessPhoneAlertTest {
                 .thenReturn(Collections.emptyList());
 
         Exception exception = assertThrows(Exception.class, () -> firestationAPIService.processPhoneAlert(anyString()));
-        assertEquals(exception.getMessage(), "Cannot find person");
+        assertEquals(exception.getMessage(), "Cannot find Person");
     }
 }

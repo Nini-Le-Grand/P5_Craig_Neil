@@ -78,7 +78,7 @@ public class FirestationServiceTest {
 
         Exception exception = assertThrows(Exception.class,
                 () -> firestationService.editFirestation(firestationUpdateDTO));
-        assertEquals(exception.getMessage(), "Cannot find firestation to edit");
+        assertEquals(exception.getMessage(), "Cannot find Firestation to edit");
     }
 
     @Test
@@ -102,7 +102,7 @@ public class FirestationServiceTest {
 
         Exception exception = assertThrows(Exception.class,
                 () -> firestationService.deleteFirestation(firestation.getStation()));
-        assertEquals(exception.getMessage(), "Cannot find firestation to delete");
+        assertEquals(exception.getMessage(), "Cannot find station to delete");
     }
 
     @Test
