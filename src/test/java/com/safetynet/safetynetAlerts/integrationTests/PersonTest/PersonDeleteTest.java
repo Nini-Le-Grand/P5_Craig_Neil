@@ -1,7 +1,7 @@
 package com.safetynet.safetynetAlerts.integrationTests.PersonTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.safetynetAlerts.data.JSONDataLoader;
+import com.safetynet.safetynetAlerts.data.DataSet;
 import com.safetynet.safetynetAlerts.UtilsData.PersonData;
 import com.safetynet.safetynetAlerts.models.Person;
 import com.safetynet.safetynetAlerts.models.PersonIdDTO;
@@ -28,7 +28,7 @@ class PersonDeleteTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private JSONDataLoader jsonDataLoader;
+    private DataSet dataSet;
 
     @InjectMocks
     private PersonData personData;
@@ -37,7 +37,7 @@ class PersonDeleteTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        jsonDataLoader.loadDataFromFile();
+        dataSet.loadDataFromFile();
 
         Person person = personData.getPerson();
         mockMvc.perform(post("/person")

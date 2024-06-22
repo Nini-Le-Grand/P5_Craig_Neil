@@ -1,6 +1,6 @@
 package com.safetynet.safetynetAlerts.DAO;
 
-import com.safetynet.safetynetAlerts.data.JSONDataLoader;
+import com.safetynet.safetynetAlerts.data.DataSet;
 import com.safetynet.safetynetAlerts.models.MedicalRecord;
 import com.safetynet.safetynetAlerts.models.MedicalRecordUpdateDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.util.Optional;
 @Service
 public class MedicalRecordDAO {
     @Autowired
-    private JSONDataLoader jsonDataLoader;
+    private DataSet dataSet;
 
     /**
      * Retrieves all {@link MedicalRecord} from the data set.
@@ -23,7 +23,7 @@ public class MedicalRecordDAO {
      * @return a list of all medical records.
      */
     public List<MedicalRecord> getMedicalRecords() {
-        return jsonDataLoader.getJsonData().getMedicalrecords();
+        return dataSet.getJsonData().getMedicalrecords();
     }
 
     /**

@@ -1,7 +1,6 @@
 package com.safetynet.safetynetAlerts.DAO;
 
-import com.safetynet.safetynetAlerts.data.JSONDataLoader;
-import com.safetynet.safetynetAlerts.models.Firestation;
+import com.safetynet.safetynetAlerts.data.DataSet;
 import com.safetynet.safetynetAlerts.models.Person;
 import com.safetynet.safetynetAlerts.models.PersonUpdateDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,7 @@ import java.util.stream.Collectors;
 @Service
 public class PersonDAO {
     @Autowired
-    private JSONDataLoader jsonDataLoader;
+    private DataSet dataSet;
 
     /**
      * Retrieves all {@link Person} from the data set.
@@ -25,7 +24,7 @@ public class PersonDAO {
      * @return a list of all persons.
      */
     public List<Person> getPersons() {
-        return jsonDataLoader.getJsonData().getPersons();
+        return dataSet.getJsonData().getPersons();
     }
 
     /**

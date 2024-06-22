@@ -1,7 +1,7 @@
 package com.safetynet.safetynetAlerts.integrationTests.MedicalRecordTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.safetynetAlerts.data.JSONDataLoader;
+import com.safetynet.safetynetAlerts.data.DataSet;
 import com.safetynet.safetynetAlerts.UtilsData.MedicalRecordData;
 import com.safetynet.safetynetAlerts.models.MedicalRecord;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +28,7 @@ public class MedicalRecordPostTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private JSONDataLoader jsonDataLoader;
+    private DataSet dataSet;
 
     @InjectMocks
     private MedicalRecordData medicalRecordData;
@@ -37,7 +37,7 @@ public class MedicalRecordPostTest {
 
     @BeforeEach
     void setUp() throws IOException {
-        jsonDataLoader.loadDataFromFile();
+        dataSet.loadDataFromFile();
 
         medicalRecord = medicalRecordData.getMedicalRecord();
     }

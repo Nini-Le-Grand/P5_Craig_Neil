@@ -1,7 +1,7 @@
 package com.safetynet.safetynetAlerts.integrationTests.APITest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.safetynetAlerts.data.JSONDataLoader;
+import com.safetynet.safetynetAlerts.data.DataSet;
 import com.safetynet.safetynetAlerts.UtilsData.FirestationData;
 import com.safetynet.safetynetAlerts.models.Firestation;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +30,7 @@ public class PhoneAlertGetTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private JSONDataLoader jsonDataLoader;
+    private DataSet dataSet;
 
     @InjectMocks
     private FirestationData firestationData;
@@ -39,7 +39,7 @@ public class PhoneAlertGetTest {
 
     @BeforeEach
     void setup() throws Exception {
-        jsonDataLoader.loadDataFromFile();
+        dataSet.loadDataFromFile();
 
         firestation = firestationData.getFireStation();
     }

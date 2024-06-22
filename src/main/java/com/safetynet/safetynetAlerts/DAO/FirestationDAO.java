@@ -1,8 +1,7 @@
 package com.safetynet.safetynetAlerts.DAO;
 
-import com.safetynet.safetynetAlerts.data.JSONDataLoader;
+import com.safetynet.safetynetAlerts.data.DataSet;
 import com.safetynet.safetynetAlerts.models.Firestation;
-import com.safetynet.safetynetAlerts.models.MedicalRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,7 @@ import java.util.stream.Collectors;
 @Service
 public class FirestationDAO {
     @Autowired
-    private JSONDataLoader jsonDataLoader;
+    private DataSet dataSet;
 
     /**
      * Retrieves all {@link Firestation} from the data set.
@@ -24,7 +23,7 @@ public class FirestationDAO {
      * @return The list of firestations.
      */
     public List<Firestation> getFirestations() {
-        return jsonDataLoader.getJsonData().getFirestations();
+        return dataSet.getJsonData().getFirestations();
     }
 
     /**

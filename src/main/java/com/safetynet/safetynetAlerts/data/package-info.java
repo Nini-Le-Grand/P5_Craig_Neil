@@ -5,7 +5,7 @@
  * <p>
  * Classes in this package:
  * <ul>
- *     <li>{@link com.safetynet.safetynetAlerts.data.JSONDataLoader}: Service for loading JSON data from a file.</li>
+ *     <li>{@link com.safetynet.safetynetAlerts.data.DataSet}: Service for loading JSON data from a file.</li>
  * </ul>
  */
 package com.safetynet.safetynetAlerts.data;

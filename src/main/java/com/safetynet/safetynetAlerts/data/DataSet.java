@@ -15,11 +15,11 @@ import java.io.IOException;
  */
 @Getter
 @Service
-public class JSONDataLoader {
+public class DataSet {
 
     private JSONData jsonData;
 
-    private static final Logger logger = LoggerFactory.getLogger(JSONDataLoader.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataSet.class);
 
     /**
      * Loads JSON data from a file and maps it to Java objects.

@@ -1,7 +1,7 @@
 package com.safetynet.safetynetAlerts.integrationTests.PersonTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.safetynetAlerts.data.JSONDataLoader;
+import com.safetynet.safetynetAlerts.data.DataSet;
 import com.safetynet.safetynetAlerts.UtilsData.PersonData;
 import com.safetynet.safetynetAlerts.models.PersonUpdateDTO;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +27,7 @@ class PersonPutTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private JSONDataLoader jsonDataLoader;
+    private DataSet dataSet;
 
     @InjectMocks
     private PersonData personData;
@@ -36,7 +36,7 @@ class PersonPutTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        jsonDataLoader.loadDataFromFile();
+        dataSet.loadDataFromFile();
 
         personUpdateDTO = personData.getPersonUpdateDTO();
 
